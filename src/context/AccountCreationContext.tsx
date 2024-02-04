@@ -1,6 +1,7 @@
 import { createContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import React, { ReactNode } from 'react';
+import apiConfigs from '../configs/apiConfigs';
 
 interface AccountContextProps {
     children: ReactNode;
@@ -22,6 +23,8 @@ export default AccountContext;
 
 
 export const AccountProvider: React.FC<AccountContextProps> = ({children}) => {
+    console.log("process.env.NODE_ENV", process.env.NODE_ENV);
+    console.log(apiConfigs);
 
     const getTokens = () => {
         const tokensString = localStorage.getItem('authTokens');
@@ -33,7 +36,7 @@ export const AccountProvider: React.FC<AccountContextProps> = ({children}) => {
 
     const getAllOrgs = async () => {
         const authTokens = getTokens();
-        const response = await fetch('http://127.0.0.1:8000/auth/api/orgs/', {
+        const response = await fetch('https://1225-2409-40e3-36-721d-349d-78c5-592-3829.ngrok-free.app/auth/api/orgs/', {
             method: 'GET',
             headers: {
                 'Content-Type':'application/json',
@@ -50,7 +53,7 @@ export const AccountProvider: React.FC<AccountContextProps> = ({children}) => {
 
     const updateOrg = async (orgInfo:OrgInfo) => {
         const authTokens = getTokens();
-        const response = await fetch(`http://127.0.0.1:8000/auth/api/orgs/${orgInfo.id}/`, {
+        const response = await fetch(`https://1225-2409-40e3-36-721d-349d-78c5-592-3829.ngrok-free.app/auth/api/orgs/${orgInfo.id}/`, {
             method: 'PUT',
             headers: {
                 'Content-Type':'application/json',
@@ -67,7 +70,7 @@ export const AccountProvider: React.FC<AccountContextProps> = ({children}) => {
 
     const createNewOrg = async (orgInfo:OrgInfo) => {
         const authTokens = getTokens();
-        const response = await fetch(`http://127.0.0.1:8000/auth/api/orgs/`, {
+        const response = await fetch(`https://1225-2409-40e3-36-721d-349d-78c5-592-3829.ngrok-free.app/auth/api/orgs/`, {
             method: 'POST',
             headers: {
                 'Content-Type':'application/json',
@@ -84,7 +87,7 @@ export const AccountProvider: React.FC<AccountContextProps> = ({children}) => {
 
     const createUser = async (orgInfo:OrgInfo) => {
         const authTokens = getTokens();
-        const response = await fetch(`http://127.0.0.1:8000/auth/api/orgs/`, {
+        const response = await fetch(`https://1225-2409-40e3-36-721d-349d-78c5-592-3829.ngrok-free.app/auth/api/orgs/`, {
             method: 'POST',
             headers: {
                 'Content-Type':'application/json',

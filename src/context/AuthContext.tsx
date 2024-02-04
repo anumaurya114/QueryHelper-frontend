@@ -25,7 +25,7 @@ export const AuthProvider: React.FC<AuthContextProps> = ({children}) => {
     const navigate = useNavigate();
 
     let loginUser = async ({username, password}:  { username: string; password: string }) => {
-        const response = await fetch('http://127.0.0.1:8000/auth/api/token/', {
+        const response = await fetch('https://1225-2409-40e3-36-721d-349d-78c5-592-3829.ngrok-free.app/auth/api/token/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -53,7 +53,7 @@ export const AuthProvider: React.FC<AuthContextProps> = ({children}) => {
 
     const updateToken = async () => {
         const authTokens = getTokens();
-        const response = await fetch('http://127.0.0.1:8000/auth/api/token/refresh/', {
+        const response = await fetch('https://1225-2409-40e3-36-721d-349d-78c5-592-3829.ngrok-free.app/auth/api/token/refresh/', {
             method: 'POST',
             headers: {
                 'Content-Type':'application/json'

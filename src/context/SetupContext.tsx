@@ -32,7 +32,7 @@ export const SetupProvider: React.FC<SetupContextProps> = ({children}) => {
 
     const getAndSetDataLayout = async () => {
         const authTokens = getTokens();
-        const response = await fetch('http://127.0.0.1:8000/core/api/data-layout/', {
+        const response = await fetch('https://1225-2409-40e3-36-721d-349d-78c5-592-3829.ngrok-free.app/core/api/data-layout/', {
             method: 'GET',
             headers: {
                 'Content-Type':'application/json',
@@ -48,7 +48,7 @@ export const SetupProvider: React.FC<SetupContextProps> = ({children}) => {
 
     const resetToDefaultSelection = async () => {
         const authTokens = getTokens();
-        const response = await fetch('http://127.0.0.1:8000/core/api/reset-data-layout/', {
+        const response = await fetch('https://1225-2409-40e3-36-721d-349d-78c5-592-3829.ngrok-free.app/core/api/reset-data-layout/', {
             method: 'POST',
             headers: {
                 'Content-Type':'application/json',
@@ -65,7 +65,7 @@ export const SetupProvider: React.FC<SetupContextProps> = ({children}) => {
 
     const setDataLayoutSelection = async (tablesAndColsSelection: Record<string, string[]>) => {
         const authTokens = getTokens();
-        const response = await fetch('http://127.0.0.1:8000/core/api/set-selection/', {
+        const response = await fetch('https://1225-2409-40e3-36-721d-349d-78c5-592-3829.ngrok-free.app/core/api/set-selection/', {
             method: 'POST',
             headers: {
                 'Content-Type':'application/json',

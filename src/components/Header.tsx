@@ -43,7 +43,6 @@ const Header = () => {
         <Link to="/run-query" style={{borderRadius:'1px', color:'white'}} onClick={() => setSelectedItem("RunQuery")} >Run Query</Link>
         <Link to="/setup" style={{borderRadius:'1px', color:'white'}} onClick={() => setSelectedItem("Setup")} >Setup</Link>
         <Link to="/logs" style={{borderRadius:'1px', color:'white'}} onClick={() => setSelectedItem("Logs")} >Logs</Link>
-        <Link to="/account-creation" style={{borderRadius:'1px', color:'white'}} onClick={() => setSelectedItem("AccountCreation")} >Account Creation</Link>
         <button style={{borderRadius:'1px'}} onClick={logoutUser}>Logout</button>
       </NavLinks>
     </HeaderContainer>

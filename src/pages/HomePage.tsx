@@ -110,7 +110,7 @@ const HomePage = () => {
     }, [])
 
     const getProfile = async () => {
-        let response = await fetch('http://127.0.0.1:8000/auth/api/profile', {
+        let response = await fetch('https://1225-2409-40e3-36-721d-349d-78c5-592-3829.ngrok-free.app/auth/api/profile', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
