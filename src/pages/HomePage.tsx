@@ -104,27 +104,7 @@ const HomePage = () => {
             handleSubmit();
         }
     };
-
-    useEffect(() => {
-        getProfile()
-    }, [])
-
-    const getProfile = async () => {
-        let response = await fetch('https://1225-2409-40e3-36-721d-349d-78c5-592-3829.ngrok-free.app/auth/api/profile', {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Token ' + String(authTokens.access)
-            }
-        })
-        let data = await response.json()
-        console.log(data, "response data");
-        if (response.status === 200) {
-            setProfile(data)
-        } else if (response.statusText === 'Unauthorized') {
-            logoutUser()
-        }
-    }
+    
 
     return (
         <>

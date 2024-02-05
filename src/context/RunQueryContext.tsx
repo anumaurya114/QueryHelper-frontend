@@ -1,6 +1,7 @@
 import { createContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import React, { ReactNode } from 'react';
+import apiConfigs from '../configs/apiConfigs';
 
 interface RunQueryContextProps {
     children: ReactNode;
@@ -65,7 +66,7 @@ export const RunQueryProvider: React.FC<RunQueryContextProps> = ({children}) => 
 
     const getRunQueryResponse = async (inputText: string) => {
         const authTokens = getTokens();
-        const response = await fetch('https://1225-2409-40e3-36-721d-349d-78c5-592-3829.ngrok-free.app/core/api/get-run-query-response/', {
+        const response = await fetch(`${apiConfigs.baseUrl}/core/api/get-run-query-response/`, {
             method: 'POST',
             headers: {
                 'Content-Type':'application/json',

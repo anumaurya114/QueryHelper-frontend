@@ -1,6 +1,7 @@
 import { createContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import React, { ReactNode } from 'react';
+import apiConfigs from '../configs/apiConfigs';
 
 interface LogsAndHistoryProps {
     children: ReactNode;
@@ -32,7 +33,7 @@ export const LogsAndHistoryProvider: React.FC<LogsAndHistoryProps> = ({children}
 
     const getLogFiles = async () => {
         const authTokens = getTokens();
-        const response = await fetch('https://1225-2409-40e3-36-721d-349d-78c5-592-3829.ngrok-free.app/core/api/log-files/', {
+        const response = await fetch(`${apiConfigs.baseUrl}/core/api/log-files/`, {
             method: 'POST',
             headers: {
                 'Content-Type':'application/json',
@@ -49,7 +50,7 @@ export const LogsAndHistoryProvider: React.FC<LogsAndHistoryProps> = ({children}
     const downloadLogFile = async (filename:string) => {
         try {
           const authTokens = getTokens();
-          const response = await fetch(`https://1225-2409-40e3-36-721d-349d-78c5-592-3829.ngrok-free.app/core/api/log-file/${filename}/`, {
+          const response = await fetch(`${apiConfigs.baseUrl}/core/api/log-file/${filename}/`, {
               method: 'POST',
               headers: {
                   'Content-Type':'text',

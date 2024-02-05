@@ -31,11 +31,11 @@ function App() {
                 <Header/>
                 <Routes>
                     <Route path="/" element={<PrivateRoute><HomePage/></PrivateRoute>} />
-                    <Route path="/login" element={<LoginPage/>}/>
-                    <Route path="/run-query" element={<RunQueryPage/>}/>
-                    <Route path="/setup" element={<SetupPage/>}/>
-                    <Route path="/logs" element={<LogsAndHistoryPage/>}/>
-                    <Route path="/account-creation" element={<AccountCreationPage/>} />
+                    <Route path="/login" element={<LoginPage/>} />
+                    <Route path="/run-query" element={<PrivateRoute><RunQueryPage/></PrivateRoute>}/>
+                    <Route path="/setup" element={<PrivateRoute><SetupPage/></PrivateRoute>} />
+                    <Route path="/logs" element={<PrivateRoute><LogsAndHistoryPage/></PrivateRoute>}/>
+                    <Route path="/account-creation" element={<PrivateRoute><AccountCreationPage/></PrivateRoute>}/>
                 </Routes>
             </AccountProvider>
             </SetupProvider>

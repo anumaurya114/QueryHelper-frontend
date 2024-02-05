@@ -1,13 +1,13 @@
 interface Config {
-    apiUrl: string;
+  baseUrl: string;
   }
   
   const config: { [key: string]: Config } = {
     development: {
-      apiUrl: 'http://localhost:5000/api',
+      baseUrl: 'http://localhost:8000',
     },
     production: {
-      apiUrl: 'https://api.example.com',
+      baseUrl: 'https://api.example.com',
     },
   };
   
