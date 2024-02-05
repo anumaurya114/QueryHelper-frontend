@@ -16,6 +16,7 @@ import Header from './components/Header';
 
 import PrivateRoute from './utils/PrivateRoute';
 import AccountCreationPage from './pages/AccountCreationPage';
+import ErrorBoundary from './components/ErrorBoundary';
 
 
 function App() {
@@ -28,6 +29,7 @@ function App() {
             <LogsAndHistoryProvider>
             <SetupProvider>
             <AccountProvider>
+            <ErrorBoundary>
                 <Header/>
                 <Routes>
                     <Route path="/" element={<PrivateRoute><HomePage/></PrivateRoute>} />
@@ -37,6 +39,7 @@ function App() {
                     <Route path="/logs" element={<PrivateRoute><LogsAndHistoryPage/></PrivateRoute>}/>
                     <Route path="/account-creation" element={<PrivateRoute><AccountCreationPage/></PrivateRoute>}/>
                 </Routes>
+            </ErrorBoundary>
             </AccountProvider>
             </SetupProvider>
             </LogsAndHistoryProvider>

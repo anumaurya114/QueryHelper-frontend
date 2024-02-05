@@ -26,22 +26,26 @@ export const AuthProvider: React.FC<AuthContextProps> = ({ children }) => {
     const navigate = useNavigate();
 
     let loginUser = async ({ username, password }: { username: string; password: string }) => {
-        const response = await fetch(`${apiConfigs.baseUrl}/auth/api/token/`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ username: username, password: password })
-        });
+        try {
+            const response = await fetch(`${apiConfigs.baseUrl}/auth/api/token/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username: username, password: password })
+            });
 
-        let data = await response.json();
+            let data = await response.json();
 
-        if (data) {
-            localStorage.setItem('authTokens', JSON.stringify(data));
-            setAuthTokens(data);
-            navigate('/');
-        } else {
-            alert('Something went wrong while logging in the user!')
+            if (data) {
+                localStorage.setItem('authTokens', JSON.stringify(data));
+                setAuthTokens(data);
+                navigate('/');
+            } else {
+                alert('Something went wrong while logging in the user!')
+            }
+        } catch (error) {
+            console.log(error);
         }
     }
 
