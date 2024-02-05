@@ -7,7 +7,7 @@ interface Config {
       baseUrl: 'http://localhost:8000',
     },
     production: {
-      baseUrl: 'https://api.example.com',
+      baseUrl: 'http://192.168.1.42:5026',
     },
   };
   
