@@ -37,7 +37,7 @@ export const AuthProvider: React.FC<AuthContextProps> = ({ children }) => {
 
             let data = await response.json();
 
-            if (data) {
+            if (data && response.status==200) {
                 localStorage.setItem('authTokens', JSON.stringify(data));
                 setAuthTokens(data);
                 navigate('/');
