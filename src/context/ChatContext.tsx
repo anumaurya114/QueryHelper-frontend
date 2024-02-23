@@ -12,6 +12,7 @@ export default ChatContext;
 
 export const ChatProvider: React.FC<ChatContextProps> = ({children}) => {
 
+    const [processingStatus, setProcessingStatus] = useState<boolean>(false);
     const getTokens = () => {
         const tokensString = localStorage.getItem('authTokens');
         if(tokensString===undefined || tokensString===null){
@@ -30,6 +31,7 @@ export const ChatProvider: React.FC<ChatContextProps> = ({children}) => {
     }
 
     const getBotMessage = async (inputText: string) => {
+        setProcessingStatus(true);
         const authTokens = getTokens();
         const response = await fetch(`${apiConfigs.baseUrl}/core/api/get-response/`, {
             method: 'POST',
@@ -41,6 +43,7 @@ export const ChatProvider: React.FC<ChatContextProps> = ({children}) => {
         })
        
         const data = await response.json();
+        setProcessingStatus(false);
         if (response.status === 200) {
             return data.response;
         } else return null;
@@ -50,6 +53,7 @@ export const ChatProvider: React.FC<ChatContextProps> = ({children}) => {
         getBotMessage: getBotMessage,
         appendMessages: appendMessages,
         messages: messages,
+        processingStatus:processingStatus,
     }
 
     return(

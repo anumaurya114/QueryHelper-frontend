@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import styled from 'styled-components';
 import Select, { MultiValue, SingleValue } from "react-select";
 import makeAnimated from 'react-select/animated';
-import AccountContext, {OrgInfo} from '../context/AccountCreationContext';
+import AccountContext, { OrgInfo } from '../context/AccountCreationContext';
 
 
 const Container = styled.div`
@@ -62,22 +62,22 @@ const AccountCreationPage = () => {
   const [password, setPassword] = useState('');
   const [reload, setReload] = useState<boolean>(false);
 
-  const handleOrgSelection = (selectedOption:any) => {
-    if(selectedOption.label && selectedOption.value) {
-      setSelectedOrg({id:selectedOption.value, name:selectedOption.label});
+  const handleOrgSelection = (selectedOption: any) => {
+    if (selectedOption.label && selectedOption.value) {
+      setSelectedOrg({ id: selectedOption.value, name: selectedOption.label });
       setSelectedOrgName(selectedOption.label);
     } else setSelectedOrg(null);
     console.log(selectedOrg);
   }
 
-  const handleOrgSelectionForUserCreation = (selectedOption:any) => {
-    if(selectedOption.label && selectedOption.value) {
-      setSelectedOrgUseCreation({id:selectedOption.value, name:selectedOption.label});
+  const handleOrgSelectionForUserCreation = (selectedOption: any) => {
+    if (selectedOption.label && selectedOption.value) {
+      setSelectedOrgUseCreation({ id: selectedOption.value, name: selectedOption.label });
     } else setSelectedOrgUseCreation(null);
   }
-  
+
   useEffect(() => {
-    getAllOrgs().then((orgs:any) => {
+    getAllOrgs().then((orgs: any) => {
       setOrgs(orgs);
     });
     setSelectedOrg(null);
@@ -86,53 +86,53 @@ const AccountCreationPage = () => {
   const createAccount = (e: React.FormEvent) => {
     e.preventDefault();
   };
-  
+
   const handleUpdateOrg = () => {
-    updateOrg({id:selectedOrg?.id, name:selectedOrgName}).then((result:any) => {
+    updateOrg({ id: selectedOrg?.id, name: selectedOrgName }).then((result: any) => {
       console.log(result);
     })
     setReload(!reload);
   }
 
   const handleCreateOrg = () => {
-  createNewOrg({name:newOrgName}).then((result:any) => {
-    console.log(result);
-  });
-  setReload(!reload);
+    createNewOrg({ name: newOrgName }).then((result: any) => {
+      console.log(result);
+    });
+    setReload(!reload);
   }
 
   return (
     <>
       <h1 style={{ textAlign: 'center' }}>Setup</h1>
       <Container>
-        <div style={{flexDirection:'column'}}>
-        <LoginForm>
-        <Title>Create/Update Org</Title>
-        <Select
-            id='orgs'
-            closeMenuOnSelect={false}
-            components={animatedComponents}
-            defaultValue={[]}
-            options={orgs.map((orgInfo:OrgInfo) => { return { value: orgInfo.id, label: orgInfo.name } }).sort((a,b) => a.label>b.label? 1 : -1) || []}
-            onChange={(selectedOption:any) => handleOrgSelection(selectedOption)}
-        />
-        {
-        <>
-        <Input placeholder={"no org selected"} value={selectedOrgName} 
-        onChange={(e) => 
-        setSelectedOrgName(e.target.value)}>
-        </Input>
-        <button onClick={() => handleUpdateOrg()}> Update Org</button>
-        </>}
-        {
-        <>
-        <Input value={newOrgName} 
-        onChange={(e) => 
-          setNewOrgName(e.target.value)}>
-        </Input>
-        <button onClick={() => handleCreateOrg()}> Create New Org</button>
-        </>}
-        </LoginForm>
+        <div style={{ flexDirection: 'column' }}>
+          <LoginForm>
+            <Title>Create/Update Org</Title>
+            <Select
+              id='orgs'
+              closeMenuOnSelect={false}
+              components={animatedComponents}
+              defaultValue={[]}
+              options={orgs.map((orgInfo: OrgInfo) => { return { value: orgInfo.id, label: orgInfo.name } }).sort((a, b) => a.label > b.label ? 1 : -1) || []}
+              onChange={(selectedOption: any) => handleOrgSelection(selectedOption)}
+            />
+            {
+              <>
+                <Input placeholder={"no org selected"} value={selectedOrgName}
+                  onChange={(e) =>
+                    setSelectedOrgName(e.target.value)}>
+                </Input>
+                <button onClick={() => handleUpdateOrg()}> Update Org</button>
+              </>}
+            {
+              <>
+                <Input value={newOrgName}
+                  onChange={(e) =>
+                    setNewOrgName(e.target.value)}>
+                </Input>
+                <button onClick={() => handleCreateOrg()}> Create New Org</button>
+              </>}
+          </LoginForm>
         </div>
         <LoginForm onSubmit={createAccount}>
           <Title>Create User Account</Title>
@@ -141,8 +141,8 @@ const AccountCreationPage = () => {
             closeMenuOnSelect={false}
             components={animatedComponents}
             defaultValue={[]}
-            options={orgs.map((orgInfo:OrgInfo) => { return { value: orgInfo.id, label: orgInfo.name } }).sort((a,b) => a.label>b.label? 1 : -1) || []}
-            onChange={(selectedOption:any) => handleOrgSelectionForUserCreation(selectedOption)}
+            options={orgs.map((orgInfo: OrgInfo) => { return { value: orgInfo.id, label: orgInfo.name } }).sort((a, b) => a.label > b.label ? 1 : -1) || []}
+            onChange={(selectedOption: any) => handleOrgSelectionForUserCreation(selectedOption)}
           />
           <Input
             type="text"
@@ -158,7 +158,7 @@ const AccountCreationPage = () => {
           />
           <Button type="submit">Create User</Button>
         </LoginForm>
-      
+
         <LoginForm onSubmit={createAccount}>
           <Title>Update Account</Title>
           <Input
@@ -181,5 +181,3 @@ const AccountCreationPage = () => {
 };
 
 export default AccountCreationPage;
-
-

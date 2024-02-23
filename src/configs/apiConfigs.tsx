@@ -4,7 +4,7 @@ interface Config {
   
   const config: { [key: string]: Config } = {
     development: {
-      baseUrl: 'http://192.168.1.42:5025',
+      baseUrl: 'http://localhost:8000',
     },
     production: {
       baseUrl: 'http://192.168.1.42:5025',

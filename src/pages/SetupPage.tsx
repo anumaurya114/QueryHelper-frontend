@@ -45,6 +45,19 @@ const Button = styled.button`
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  margin:auto;
+`;
+
+const FloatingContainer = styled.div`
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 10px;
+  border: none;
+  background-color: grey;
+  color: white;
+  cursor: pointer;
+  z-index: 999; /* Ensure it appears on top of other elements */
 `;
 
 interface TableInfo {
@@ -69,7 +82,7 @@ const SetupPage = () => {
   } = useContext(SetupContext);
 
   const [tablesSelected, setTablesSelected] = useState(Object.keys((datalayout as DataLayout).selectedTables || {}));
-
+  const [updateSelectionEnabled, setUpdateSelectionEnabled] = useState<boolean>(false);
   useEffect(() => {
     setTablesSelected(Object.keys((datalayout as DataLayout).selectedTables || {}));
   }, [])
@@ -90,6 +103,7 @@ const SetupPage = () => {
     })
     setDatalayout(datalayoutCopy);
     setTablesSelected(Object.keys((datalayoutCopy).selectedTables || {}));
+    setUpdateSelectionEnabled(true);
   };
 
   const handleColumnSelection = (tableName: string, selectedOptions: MultiValue<{ value: string, label: string }>) => {
@@ -101,6 +115,7 @@ const SetupPage = () => {
       })
     setDatalayout(datalayoutCopy);
     setTablesSelected(Object.keys((datalayoutCopy.selectedTables || {})));
+    setUpdateSelectionEnabled(true);
   };
 
 
@@ -109,6 +124,7 @@ const SetupPage = () => {
     setDataLayoutSelection((datalayout as DataLayout).selectedTables).then((datalayout: DataLayout) => { 
       setDatalayout(datalayout) });
       setTablesSelected(Object.keys((datalayout.selectedTables || {})));
+    setUpdateSelectionEnabled(false);
   };
 
   const handleResetDefault = () => {
@@ -162,10 +178,10 @@ const SetupPage = () => {
             </div>
           ))}
         </div>
-        <div>
-          <button onClick={handleSelection}>Update Selection</button>
+        <FloatingContainer>
+          <button disabled={!updateSelectionEnabled} onClick={handleSelection}>Update Selection</button>
           <button onClick={handleResetDefault}>Reset to Default</button>
-        </div>
+        </FloatingContainer>
       </div>
     </>
   );

@@ -9,25 +9,44 @@ import { useNavigate } from 'react-router-dom';
 import RunQueryContext from '../context/RunQueryContext';
 
 
+interface ProcessingStatusProps {
+  processing: boolean;
+}
+
+const ProcessingStatus = styled.div<ProcessingStatusProps>`
+  background-color: ${(props) => (props.processing ? '#ffc107' : '#28a745')};
+  color: ${(props) => (props.processing ? '#000' : '#fff')};
+  padding: 10px;
+  border-radius: 5px;
+`;
+
+
+
 const ChatbotContainer = styled.div`
   max-width: calc(100% - 20px);
   margin: auto;
+  height: 70vh; /* Set the height to 70% of the viewport height */
+  overflow: hidden;
+  display: flex;
+  flex-direction: column-reverse; /* Reverse the column direction to display messages from bottom to top */
 `;
 
 const MessagesContainer = styled.div`
+  flex-grow: 1; /* Allow the container to grow and fill the remaining space */
   overflow-y: auto;
-  max-height: 200px;
   padding: 10px;
   border: 1px solid #ccc;
+  scroll-behavior: smooth; /* Enable smooth scrolling */
+  margin-bottom:20px;
 `;
 
 const Message = styled.div<{ isUser?: boolean }>`
   padding: 8px;
-  margin: 8px 0;
+  margin-bottom: 8px;
   border-radius: 8px;
   max-width: 70%;
-  margin-left:${(props) => (props.isUser ? '20%' : '0%')}
-  margin-right:${(props) => (props.isUser ? '0%' : '20%')}
+  margin-left: ${(props) => (props.isUser ? '20%' : '0%')};
+  margin-right: ${(props) => (props.isUser ? '0%' : '20%')};
   align-self: ${(props) => (props.isUser ? 'flex-end' : 'flex-start')};
   background-color: ${(props) => (props.isUser ? '#4caf50' : '#f2f2f2')};
   color: ${(props) => (props.isUser ? 'white' : 'black')};
@@ -35,6 +54,10 @@ const Message = styled.div<{ isUser?: boolean }>`
 
 
 const InputContainer = styled.div`
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
   display: flex;
   align-items: center;
   margin-top: 10px;
@@ -43,9 +66,15 @@ const InputContainer = styled.div`
 const Input = styled.textarea`
   width: 100%;
   resize: none;
-  padding: 8px;
+  padding: 2px;
   border: 1px solid #ccc;
   border-radius: 4px;
+  overflow-y: auto;
+  min-height: 10px; /* Initial height */
+  resize: none; /* Prevent resizing */
+  overflow-y: hidden; /* Hide vertical scrollbar */
+  border: 1px solid #ccc;
+  margin-left:20px;
 `;
 
 const SubmitButton = styled.button`
@@ -64,7 +93,8 @@ const HomePage = () => {
     const {
         getBotMessage,
         appendMessages,
-        messages
+        messages,
+        processingStatus,
     } = useContext(ChatContext);
     const {
         queryInput,
@@ -74,12 +104,20 @@ const HomePage = () => {
 
     let [profile, setProfile] = useState([]);
     const [inputValue, setInputValue] = useState('');
-    const handleInputChange = (e:any) => {
-        setInputValue(e.target.value);
-    };
+    
     const [inputText, setInputText] = useState('');
+    const [copiedStatus, setCopiedStatus] = useState(false);
 
     const inputRef = useRef<HTMLTextAreaElement>(null);
+    const messagesEndRef = useRef<HTMLDivElement>(null);
+
+    const scrollToBottom = () => {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    };
+  
+    useEffect(() => {
+      scrollToBottom();
+    }, [messages]);
 
     useEffect(() => {
         inputRef?.current?.focus();
@@ -104,7 +142,19 @@ const HomePage = () => {
             handleSubmit();
         }
     };
-    
+
+    const copyToClipboard = (textToCopy:string) => {
+        navigator.clipboard.writeText(textToCopy)
+          .then(() => {
+            setCopiedStatus(true);
+            setTimeout(() => {
+                setCopiedStatus(false);
+            }, 2000); // Reset copied state after 2 seconds
+          })
+          .catch((error) => {
+            alert('Failed to copy:');
+          });
+      };
 
     return (
         <>
@@ -115,20 +165,26 @@ const HomePage = () => {
                 <MessagesContainer>
                     {messages.map((msg:any) => (
                         <Message key={msg.id} isUser={msg.isUser}>
-                            <ReactMarkdown>{msg.content}</ReactMarkdown>
-                            {(msg.id==messages.length-1) && <button onClick={() => {
+                            <ReactMarkdown children={msg.content.replaceAll("\n","  \n")} ></ReactMarkdown>
+                            {(msg.id%2==(messages.length-1)%2) && <div><button onClick={() => {
                                 setQueryInput(msg.content);
                                 navigate('run-query');
                                 handleSubmitOfRunQuery(msg.content);
-                                }}>Run query</button>} 
+                                }}>Run query</button>
+                                <button onClick={() => copyToClipboard(msg.content)}>copy</button>
+                                {copiedStatus && <p>Text copied to clipboard!</p>}
+                                </div>} 
                         </Message>
                     ))}
-                </MessagesContainer>
+                <div  ref={messagesEndRef}></div>
+                </MessagesContainer >
+                {processingStatus && <ProcessingStatus processing={processingStatus}>getting response...</ProcessingStatus>}
                 <InputContainer>
                     <Input
                         ref={inputRef}
                         value={inputText}
-                        onChange={(e) => setInputText(e.target.value)}
+                        onChange={(e) => {setInputText(e.target.value); e.target.style.height = 'auto'; // Reset the height
+                        e.target.style.height = `${e.target.scrollHeight}px`;}}
                         onKeyDown={handleKeyDown}
                         placeholder="Type your message..."
                         rows={4}

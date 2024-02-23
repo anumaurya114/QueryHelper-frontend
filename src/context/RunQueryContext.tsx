@@ -82,9 +82,9 @@ export const RunQueryProvider: React.FC<RunQueryContextProps> = ({children}) => 
     }
 
     const handleSubmit = (queryInput:string) => {
-        console.log("clicking submit");
+        setOutputDf({});
+        setOutputText('');
         setProcessingStatus(true);
-        setOutputDf({})
         if (true) {
           getRunQueryResponse(queryInput).then((response:any) => {
                 setTimeout(() => {
@@ -93,14 +93,13 @@ export const RunQueryProvider: React.FC<RunQueryContextProps> = ({children}) => 
                           console.log(JSON.parse(JSON.stringify(response.dataframe)), 'response data');
                           setOutputText(response.text);
                           const dataframe = (JSON.parse(JSON.stringify(response.dataframe)) as CSVData)
-                          console.log(dataframe, "dataframe is");
                           setOutputDf(dataframe);
+                          setProcessingStatus(false);
                         }
                 }, 1000)
             });
             
         }
-        setProcessingStatus(false);
       };
     
     let contextData = {
@@ -114,7 +113,6 @@ export const RunQueryProvider: React.FC<RunQueryContextProps> = ({children}) => 
         setOutputDf:setOutputDf,
         setOutputText:setOutputText,
         processingStatus:processingStatus,
-        setProcessingStatus:setProcessingStatus,
     }
 
     return(

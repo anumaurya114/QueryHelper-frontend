@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react'
+import React, {useContext, useState, CSSProperties} from 'react'
 import AuthContext from '../context/AuthContext';
 import styled from 'styled-components';
 import ChatContext from '../context/ChatContext';
@@ -12,20 +12,25 @@ const Container = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
   background-color: #f5f5f5;
+  overflow: hidden;
+  display: flex;
+  margin: auto;
 `;
 
 const Input = styled.textarea`
   width: 100%;
-  resize: auto;
-  padding: 20px;
-  padding-left:10px;
-  padding-right:10px;
+  resize: none;
+  padding: 2px;
   border: 1px solid #ccc;
   border-radius: 4px;
-  min-height:100px;
-`; 
+  overflow-y: auto;
+  min-height: 50px; /* Initial height */
+  resize: none; /* Prevent resizing */
+  overflow-y: hidden; /* Hide vertical scrollbar */
+  border: 1px solid #ccc;
+  margin-left:20px;
+`;
 
 const Table = styled.table`
   width: 100%;
@@ -51,7 +56,16 @@ const TableCell = styled.td`
   padding: 8px;
 `;
 
+interface ProcessingStatusProps {
+  processing: boolean;
+}
 
+const ProcessingStatus = styled.div<ProcessingStatusProps>`
+  background-color: ${(props) => (props.processing ? '#ffc107' : '#28a745')};
+  color: ${(props) => (props.processing ? '#000' : '#fff')};
+  padding: 10px;
+  border-radius: 5px;
+`;
 
 const RunQueryPage: React.FC = () => {
     const {
@@ -69,8 +83,33 @@ const RunQueryPage: React.FC = () => {
     outputDf,
     outputText,
     processingStatus,
-    setProcessingStatus,
 } = useContext(RunQueryContext);
+
+const [isHovered, setIsHovered] = useState(false);
+const [disclaimerText, setDisclaimerText] = useState(`Results are stripped to show only top 100 rows.
+Please add your custom limit to get extended result.
+eg
+ select * from schema.table limit 200. test`);
+
+ const buttonStyle: CSSProperties = {
+  width: '200px', // Set a fixed width for the button
+  padding: '10px', // Optional: Add padding to make the button visually appealing
+  position: 'relative',
+  display: 'inline-block',
+};
+
+const hoverTextStyle: CSSProperties = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  color: 'white',
+  backgroundColor: '#007bff', // Example background color for the flying text
+  padding: '5px 10px', // Optional: Add padding to make the text visually appealing
+  borderRadius: '4px', // Optional: Add border radius for the text
+  boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)', // Optional: Add box shadow for the text
+  zIndex: 1, // Ensure the flying text is above the button
+};
 
 
 
@@ -109,23 +148,35 @@ const RunQueryPage: React.FC = () => {
   return (
     <>
     <h1 style={{textAlign:'center'}}>Run Query</h1>
-    <Container style={{alignItems:'center', flexDirection:'column'}}>
-     
-      <Input placeholder='put your sql here' defaultValue={queryInput} onChange={(event) => setQueryInput(event.target.value)}>
+    <Container style={{marginTop:'10px', alignItems:'center', flexDirection:'column' }}>
+      <Input style={{paddingTop:'10px'}} placeholder='put your sql here' defaultValue={queryInput} onChange={(e) => {setQueryInput(e.target.value);  e.target.style.height = 'auto'; // Reset the height
+                        e.target.style.height = `${e.target.scrollHeight}px`;}}>
       </Input>
 
       <div style={{flexDirection:'row'}}>
-      <button style={{width:'auto', height:'30px'}} onClick={() => handleSubmit(queryInput)}>Run query</button>
-      <button onClick={() => downloadCSV()}>Download Result as CSV</button>
+      <div
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      >
+      <button style={buttonStyle} onClick={() => handleSubmit(queryInput)}
+      >Run query</button>
+      {isHovered && <p style={hoverTextStyle}>
+ {disclaimerText}
+</p>}
       </div>
-      {processingStatus==false ? <Input placeholder='result' value={outputText} style={{maxHeight:'50px'}}>
-      </Input>: <span>"Processing..."</span>}
       
+      <button style={buttonStyle} onClick={() => downloadCSV()}>Download Result as CSV</button>
+      </div>
     </Container>
-
-    <div className="p-2 table-container" >
-      {processingStatus==false ? getTableContent(outputDf): <span>"Processing..."</span>}
+    {<ProcessingStatus processing={processingStatus}>
+      {processingStatus ? 'Processing...' : 'Processing completed.'}
+    </ProcessingStatus>}
+    {(outputText as string).toLowerCase().includes("error") && <p>{outputText}</p>}
+    <div style={{minWidth:'100%', minHeight:'20px', textAlign:'center', border:'10px', borderColor:'black', margin:'20px'}}>Result Table</div>
+    <div className="p-2 table-container" style={{alignItems:'center'}}>
+      {getTableContent(outputDf)}
     </div>
+    
     </>
   );
 };
