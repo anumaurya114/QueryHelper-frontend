@@ -6,6 +6,7 @@ import { RunQueryProvider } from './context/RunQueryContext';
 import { LogsAndHistoryProvider } from './context/LogsAndHistoryContext';
 import { SetupProvider } from './context/SetupContext';
 import { AccountProvider } from './context/AccountCreationContext';
+import { OnboardingAndSetupProvider } from './context/OnboardingAndSetupContext';
 
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
@@ -17,6 +18,7 @@ import Header from './components/Header';
 import PrivateRoute from './utils/PrivateRoute';
 import AccountCreationPage from './pages/AccountCreationPage';
 import ErrorBoundary from './components/ErrorBoundary';
+import OnboardingAndSetupPage from './pages/OnboardingAndSetupPage';
 
 
 function App() {
@@ -29,6 +31,7 @@ function App() {
             <LogsAndHistoryProvider>
             <SetupProvider>
             <AccountProvider>
+            <OnboardingAndSetupProvider>
             <ErrorBoundary>
                 <Header/>
                 <Routes>
@@ -38,8 +41,10 @@ function App() {
                     <Route path="/setup" element={<PrivateRoute><SetupPage/></PrivateRoute>} />
                     <Route path="/logs" element={<PrivateRoute><LogsAndHistoryPage/></PrivateRoute>}/>
                     <Route path="/account-creation" element={<PrivateRoute><AccountCreationPage/></PrivateRoute>}/>
+                    <Route path="/onboarding-setup" element={<PrivateRoute><OnboardingAndSetupPage/></PrivateRoute>}/>
                 </Routes>
             </ErrorBoundary>
+            </OnboardingAndSetupProvider>
             </AccountProvider>
             </SetupProvider>
             </LogsAndHistoryProvider>

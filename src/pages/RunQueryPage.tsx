@@ -149,7 +149,7 @@ const hoverTextStyle: CSSProperties = {
     <>
     <h1 style={{textAlign:'center'}}>Run Query</h1>
     <Container style={{marginTop:'10px', alignItems:'center', flexDirection:'column' }}>
-      <Input style={{paddingTop:'10px'}} placeholder='put your sql here' defaultValue={queryInput} onChange={(e) => {setQueryInput(e.target.value);  e.target.style.height = 'auto'; // Reset the height
+      <Input style={{paddingTop:'10px', width:'100%', minHeight:'200px'}} placeholder='put your sql here' defaultValue={queryInput} onChange={(e) => {setQueryInput(e.target.value);  e.target.style.height = 'auto'; // Reset the height
                         e.target.style.height = `${e.target.scrollHeight}px`;}}>
       </Input>
 

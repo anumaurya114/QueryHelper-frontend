@@ -23,7 +23,7 @@ const LogsAndHistoryPage: React.FC = () => {
     <h1 style={{textAlign:'center'}}>Logs and History</h1>
     <Container style={{flexDirection:'column'}}>
       {fileList.map((file:string) => {
-        return <div style={{margin:'auto', minWidth:'20px'}}><button onClick={() => downloadLogFile(file)}>{file}</button></div>
+        return <div key={file} style={{margin:'auto', minWidth:'20px'}}><button onClick={() => downloadLogFile(file)}>{file}</button></div>
       })}
     </Container>
     </>
