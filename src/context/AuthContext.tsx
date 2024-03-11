@@ -42,10 +42,12 @@ export const AuthProvider: React.FC<AuthContextProps> = ({ children }) => {
                 setAuthTokens(data);
                 navigate('/');
             } else {
-                alert('Something went wrong while logging in the user!')
+                alert('Something went wrong while logging in the user!');
+                logoutUser();
             }
         } catch (error) {
             console.log(error);
+            logoutUser();
         }
     }
 
@@ -82,6 +84,7 @@ export const AuthProvider: React.FC<AuthContextProps> = ({ children }) => {
             }
         } catch (error) {
             console.log(error);
+            logoutUser();
         }
     }
 

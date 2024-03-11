@@ -1,7 +1,8 @@
-import { createContext, useState, useEffect } from 'react';
+import { createContext, useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import React, { ReactNode } from 'react';
 import apiConfigs from '../configs/apiConfigs';
+import OnboardingAndSetupContext from './OnboardingAndSetupContext';
 interface ChatContextProps {
     children: ReactNode;
 }
@@ -11,6 +12,11 @@ const ChatContext = createContext<any>(null);
 export default ChatContext;
 
 export const ChatProvider: React.FC<ChatContextProps> = ({children}) => {
+
+    const [processingStatus, setProcessingStatus] = useState<boolean>(false);
+    const {
+        selectConfigSetupId
+    } = useContext(OnboardingAndSetupContext);
 
     const getTokens = () => {
         const tokensString = localStorage.getItem('authTokens');
@@ -29,7 +35,8 @@ export const ChatProvider: React.FC<ChatContextProps> = ({children}) => {
         setMessages([...messages,  { id: messages.length + 2, content: inputText, isUser:true}, { id: messages.length + 1, content: botMessage, isUser:false}]);
     }
 
-    const getBotMessage = async (inputText: string) => {
+    const getBotMessage = async (inputText: string, selectConfigSetupId:any) => {
+        setProcessingStatus(true);
         const authTokens = getTokens();
         const response = await fetch(`${apiConfigs.baseUrl}/core/api/get-response/`, {
             method: 'POST',
@@ -37,10 +44,11 @@ export const ChatProvider: React.FC<ChatContextProps> = ({children}) => {
                 'Content-Type':'application/json',
                 'Authorization': 'Token ' + authTokens?.access,
             },
-            body:JSON.stringify({message:inputText})
+            body:JSON.stringify({message:inputText, configSetupId:selectConfigSetupId})
         })
        
         const data = await response.json();
+        setProcessingStatus(false);
         if (response.status === 200) {
             return data.response;
         } else return null;
@@ -50,6 +58,7 @@ export const ChatProvider: React.FC<ChatContextProps> = ({children}) => {
         getBotMessage: getBotMessage,
         appendMessages: appendMessages,
         messages: messages,
+        processingStatus:processingStatus,
     }
 
     return(

@@ -64,7 +64,7 @@ export const RunQueryProvider: React.FC<RunQueryContextProps> = ({children}) => 
 
 
 
-    const getRunQueryResponse = async (inputText: string) => {
+    const getRunQueryResponse = async (inputText: string, configSetupId:any) => {
         const authTokens = getTokens();
         const response = await fetch(`${apiConfigs.baseUrl}/core/api/get-run-query-response/`, {
             method: 'POST',
@@ -72,7 +72,7 @@ export const RunQueryProvider: React.FC<RunQueryContextProps> = ({children}) => 
                 'Content-Type':'application/json',
                 'Authorization': 'Token ' + authTokens?.access,
             },
-            body:JSON.stringify({sql:inputText})
+            body:JSON.stringify({sql:inputText, configSetupId})
         })
        
         const data = await response.json();
@@ -81,26 +81,24 @@ export const RunQueryProvider: React.FC<RunQueryContextProps> = ({children}) => 
         } else return null;
     }
 
-    const handleSubmit = (queryInput:string) => {
-        console.log("clicking submit");
+    const handleSubmit = (queryInput:string, configSetupId:any) => {
+        setOutputDf({});
+        setOutputText('');
         setProcessingStatus(true);
-        setOutputDf({})
         if (true) {
-          getRunQueryResponse(queryInput).then((response:any) => {
+          getRunQueryResponse(queryInput, configSetupId).then((response:any) => {
                 setTimeout(() => {
                     if(response!==null)
                         {
-                          console.log(JSON.parse(JSON.stringify(response.dataframe)), 'response data');
                           setOutputText(response.text);
                           const dataframe = (JSON.parse(JSON.stringify(response.dataframe)) as CSVData)
-                          console.log(dataframe, "dataframe is");
                           setOutputDf(dataframe);
+                          setProcessingStatus(false);
                         }
                 }, 1000)
             });
             
         }
-        setProcessingStatus(false);
       };
     
     let contextData = {
@@ -114,7 +112,6 @@ export const RunQueryProvider: React.FC<RunQueryContextProps> = ({children}) => 
         setOutputDf:setOutputDf,
         setOutputText:setOutputText,
         processingStatus:processingStatus,
-        setProcessingStatus:setProcessingStatus,
     }
 
     return(
