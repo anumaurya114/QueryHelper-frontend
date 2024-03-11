@@ -1,4 +1,4 @@
-import { createContext, useState, useEffect } from 'react';
+import { createContext, useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import React, { ReactNode } from 'react';
 import apiConfigs from '../configs/apiConfigs';
@@ -29,28 +29,36 @@ export const SetupProvider: React.FC<SetupContextProps> = ({ children }) => {
     }
 
     const [datalayout, setDatalayout] = useState<DataLayout>({});
+    const [selectConfigSetupId, setSelectedConfigsetupId] = useState();
+    
 
-    const getAndSetDataLayout = async () => {
+    const getAndSetDataLayout = async (configSetupId:any) => {
         const authTokens = getTokens();
         try {
             const response = await fetch(`${apiConfigs.baseUrl}/core/api/data-layout/`, {
-                method: 'GET',
+                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': 'Token ' + authTokens?.access,
-                }
+                },
+                body:JSON.stringify(
+                    {
+                        configSetupId:configSetupId
+                    }
+                )
             })
 
             const data = await response.json();
             if (response.status === 200) {
-                setDatalayout(data as DataLayout);
-            } else return null;
+               return (data as DataLayout);
+            } else return {};
         } catch (error) {
             console.log(error);
+            return {};
         }
     }
 
-    const resetToDefaultSelection = async () => {
+    const resetToDefaultSelection = async (configSetupId:any) => {
         const authTokens = getTokens();
         try {
             const response = await fetch(`${apiConfigs.baseUrl}/core/api/reset-data-layout/`, {
@@ -59,6 +67,11 @@ export const SetupProvider: React.FC<SetupContextProps> = ({ children }) => {
                     'Content-Type': 'application/json',
                     'Authorization': 'Token ' + authTokens?.access,
                 },
+                body:JSON.stringify(
+                    {
+                        configSetupId:configSetupId
+                    }
+                )
             })
 
 
@@ -79,19 +92,14 @@ export const SetupProvider: React.FC<SetupContextProps> = ({ children }) => {
                 'Content-Type': 'application/json',
                 'Authorization': 'Token ' + authTokens?.access,
             },
-            body: JSON.stringify({ tablesAndColsSelection: tablesAndColsSelection })
+            body: JSON.stringify({configSetupId:selectConfigSetupId,  tablesAndColsSelection: tablesAndColsSelection })
         })
 
         const data = await response.json();
         if (response.status === 200) {
-            console.log("response ", data);
             return (data as DataLayout);
         } else return null;
     }
-
-    useEffect(() => {
-        getAndSetDataLayout()
-    }, [])
 
     let contextData = {
         setDataLayoutSelection: setDataLayoutSelection,
@@ -99,6 +107,8 @@ export const SetupProvider: React.FC<SetupContextProps> = ({ children }) => {
         getAndSetDataLayout: getAndSetDataLayout,
         datalayout: datalayout,
         setDatalayout: setDatalayout,
+        selectConfigSetupId,
+        setSelectedConfigsetupId,
     }
 
     return (

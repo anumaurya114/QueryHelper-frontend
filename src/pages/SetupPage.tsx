@@ -76,18 +76,24 @@ const SetupPage = () => {
   const {
     setDataLayoutSelection,
     resetToDefaultSelection,
+    setSelectedConfigsetupId,
+    selectConfigSetupId,
     getAndSetDataLayout,
-    datalayout,
-    setDatalayout,
   } = useContext(SetupContext);
+  
 
+  const [datalayout, setDatalayout] = useState<DataLayout>({});
   const [tablesSelected, setTablesSelected] = useState(Object.keys((datalayout as DataLayout).selectedTables || {}));
   const [updateSelectionEnabled, setUpdateSelectionEnabled] = useState<boolean>(false);
   useEffect(() => {
     setTablesSelected(Object.keys((datalayout as DataLayout).selectedTables || {}));
-  }, [])
-
-
+  }, [datalayout]);
+  console.log("tables selected", tablesSelected)
+  
+  
+useEffect(() => {
+  getAndSetDataLayout(selectConfigSetupId).then((result:any) => setDatalayout(result as DataLayout)).catch((error:any) => error);
+}, [selectConfigSetupId]);
 
   const handleTableSelection = (selectedOptions: MultiValue<{ value: string, label: string }>) => {
     const datalayoutCopy = (datalayout as DataLayout);
@@ -128,7 +134,7 @@ const SetupPage = () => {
   };
 
   const handleResetDefault = () => {
-    resetToDefaultSelection().then((datalayout: DataLayout) => { 
+    resetToDefaultSelection(selectConfigSetupId).then((datalayout: DataLayout) => { 
       setDatalayout(datalayout) });
       setTablesSelected(Object.keys((datalayout.selectedTables || {})));
   }
@@ -149,7 +155,7 @@ const SetupPage = () => {
   }
   return (
     <>
-      <h1 style={{ textAlign: 'center' }}>Setup</h1>
+      <h1 style={{ textAlign: 'center' }}>Setup Id - {selectConfigSetupId}</h1>
       <div>
         <div>
           <h3>Select Tables:</h3>

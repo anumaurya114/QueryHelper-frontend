@@ -7,6 +7,10 @@ import styled from 'styled-components';
 import ReactMarkdown from 'react-markdown';
 import { useNavigate } from 'react-router-dom';
 import RunQueryContext from '../context/RunQueryContext';
+import OnboardingAndSetupContext from '../context/OnboardingAndSetupContext';
+import { ConfigSetup } from '../components/ConfigSetupOnboarding';
+import { Dropdown, Option } from '../components/DropDown';
+import SetupContext from '../context/SetupContext';
 
 
 interface ProcessingStatusProps {
@@ -88,114 +92,140 @@ const SubmitButton = styled.button`
 `;
 
 const HomePage = () => {
-    const navigate = useNavigate();
-    const { authTokens, logoutUser } = useContext(AuthContext);
-    const {
-        getBotMessage,
-        appendMessages,
-        messages,
-        processingStatus,
-    } = useContext(ChatContext);
-    const {
-        queryInput,
-        setQueryInput,
-        handleSubmit : handleSubmitOfRunQuery,
-    } = useContext(RunQueryContext);
+  const navigate = useNavigate();
+  const { authTokens, logoutUser } = useContext(AuthContext);
+  const {
+    getBotMessage,
+    appendMessages,
+    messages,
+    processingStatus,
+  } = useContext(ChatContext);
+  const {
+    fetchAllConfigSetups,
+  } = useContext(OnboardingAndSetupContext);
+  const {
+    queryInput,
+    setQueryInput,
+    handleSubmit: handleSubmitOfRunQuery,
+  } = useContext(RunQueryContext);
 
-    let [profile, setProfile] = useState([]);
-    const [inputValue, setInputValue] = useState('');
-    
-    const [inputText, setInputText] = useState('');
-    const [copiedStatus, setCopiedStatus] = useState(false);
+  const {
+    selectConfigSetupId,
+    setSelectedConfigsetupId
+  } = useContext(SetupContext);
 
-    const inputRef = useRef<HTMLTextAreaElement>(null);
-    const messagesEndRef = useRef<HTMLDivElement>(null);
 
-    const scrollToBottom = () => {
-      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-    };
-  
-    useEffect(() => {
-      scrollToBottom();
-    }, [messages]);
 
-    useEffect(() => {
-        inputRef?.current?.focus();
-    }, []);
-    
-    const handleSubmit = () => {
-        if (inputText.trim() !== '') {
-            setInputText('');
-            getBotMessage(inputText).then((responseText: any) => {
-                setTimeout(() => {
-                    if(responseText!==null)
-                        {appendMessages(inputText, responseText);}
-                }, 1000)
-            });
-            
-        }
-    };
+  const [configsetups, setConfigsetups] = useState<ConfigSetup[] | null>([]);
+  let [profile, setProfile] = useState([]);
+  const [inputValue, setInputValue] = useState('');
 
-    const handleKeyDown = (event:any) => {
-        if (event.key === 'Enter' && !event.shiftKey) {
-            event.preventDefault();
-            handleSubmit();
-        }
-    };
+  const [inputText, setInputText] = useState('');
+  const [copiedStatus, setCopiedStatus] = useState(false);
 
-    const copyToClipboard = (textToCopy:string) => {
-        navigator.clipboard.writeText(textToCopy)
-          .then(() => {
-            setCopiedStatus(true);
-            setTimeout(() => {
-                setCopiedStatus(false);
-            }, 2000); // Reset copied state after 2 seconds
-          })
-          .catch((error) => {
-            alert('Failed to copy:');
-          });
-      };
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
-    return (
-        <>
-        <h1 style={{textAlign:'center'}}>Query Helper</h1>
-        
-        <div>
-            <ChatbotContainer>
-                <MessagesContainer>
-                    {messages.map((msg:any) => (
-                        <Message key={msg.id} isUser={msg.isUser}>
-                            <ReactMarkdown children={msg.content.replaceAll("\n","  \n")} ></ReactMarkdown>
-                            {(msg.id%2==(messages.length-1)%2) && <div><button onClick={() => {
-                                setQueryInput(msg.content);
-                                navigate('run-query');
-                                handleSubmitOfRunQuery(msg.content);
-                                }}>Run query</button>
-                                <button onClick={() => copyToClipboard(msg.content)}>copy</button>
-                                {copiedStatus && <p>Text copied to clipboard!</p>}
-                                </div>} 
-                        </Message>
-                    ))}
-                <div  ref={messagesEndRef}></div>
-                </MessagesContainer >
-                {processingStatus && <ProcessingStatus processing={processingStatus}>getting response...</ProcessingStatus>}
-                <InputContainer>
-                    <Input
-                        ref={inputRef}
-                        value={inputText}
-                        onChange={(e) => {setInputText(e.target.value); e.target.style.height = 'auto'; // Reset the height
-                        e.target.style.height = `${e.target.scrollHeight}px`;}}
-                        onKeyDown={handleKeyDown}
-                        placeholder="Type your message..."
-                        rows={4}
-                    />
-                    <SubmitButton onClick={handleSubmit}>Send</SubmitButton>
-                </InputContainer>
-            </ChatbotContainer>
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
 
-        </div>
-        </>
-    )
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  useEffect(() => {
+    inputRef?.current?.focus();
+  }, []);
+
+  useEffect(() => {
+    fetchAllConfigSetups().then((data: any) => {
+      setConfigsetups(data);
+    });
+  }, []);
+
+
+  const handleSubmit = () => {
+    if (inputText.trim() !== '') {
+      setInputText('');
+      getBotMessage(inputText, selectConfigSetupId.toString()).then((responseText: any) => {
+        setTimeout(() => {
+          if (responseText !== null) { appendMessages(inputText, responseText); }
+        }, 1000)
+      });
+
+    }
+  };
+
+  const handleKeyDown = (event: any) => {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      handleSubmit();
+    }
+  };
+
+  const copyToClipboard = (textToCopy: string) => {
+    navigator.clipboard.writeText(textToCopy)
+      .then(() => {
+        setCopiedStatus(true);
+        setTimeout(() => {
+          setCopiedStatus(false);
+        }, 2000); // Reset copied state after 2 seconds
+      })
+      .catch((error) => {
+        alert('Failed to copy:');
+      });
+  };
+
+  return (
+    <>
+      <h1 style={{ textAlign: 'center' }}>Query Helper</h1>
+
+      <div>
+        <Dropdown defaultSelection={configsetups?.map(configsetup => {
+          return ({ label: configsetup.setupName, value: (configsetup.id || '') } as Option)
+        }).find(configsetupOption => configsetupOption.value == (selectConfigSetupId || '').toString())}
+          onHandleSelection={
+            (option: Option) =>
+              setSelectedConfigsetupId(Number(option.value))}
+          options={configsetups?.map(configsetup => { return ({ label: configsetup.setupName, value: configsetup.id?.toString() } as Option) }) || []} />
+        <ChatbotContainer>
+          <MessagesContainer style={{margin:'30px'}}>
+            {messages.map((msg: any) => (
+              <Message key={msg.id} isUser={msg.isUser}>
+                <ReactMarkdown children={msg.content.replaceAll("\n", "  \n")} ></ReactMarkdown>
+                {(msg.id % 2 == (messages.length - 1) % 2) && <div><button onClick={() => {
+                  setQueryInput(msg.content);
+                  navigate('run-query');
+                  handleSubmitOfRunQuery(msg.content, selectConfigSetupId);
+                }}>Run query</button>
+                  <button onClick={() => copyToClipboard(msg.content)}>copy</button>
+                  {copiedStatus && <p>Text copied to clipboard!</p>}
+                </div>}
+              </Message>
+            ))}
+            <div ref={messagesEndRef}></div>
+          </MessagesContainer >
+          {processingStatus && <ProcessingStatus processing={processingStatus}>getting response...</ProcessingStatus>}
+          <InputContainer style={{marginTop:'20px'}}>
+            <Input
+              ref={inputRef}
+              value={inputText}
+              onChange={(e) => {
+                setInputText(e.target.value); e.target.style.height = 'auto'; // Reset the height
+                e.target.style.height = `${e.target.scrollHeight}px`;
+              }}
+              onKeyDown={handleKeyDown}
+              placeholder="Type your message..."
+              rows={4}
+            />
+            <SubmitButton onClick={handleSubmit}>Send</SubmitButton>
+          </InputContainer>
+        </ChatbotContainer>
+
+      </div>
+    </>
+  )
 }
 
 export default HomePage;

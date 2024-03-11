@@ -38,7 +38,6 @@ const EditableModelModal = <T extends Model>({
         const { name, value } = e.target;
         setEditedModel(prevModel => ({ ...prevModel, [name]: value }));
     };
-    console.log(Object.keys(editedModel),'jjjjj')
 
 
     const isNewModel = !editedModel.id;
@@ -64,7 +63,7 @@ const EditableModelModal = <T extends Model>({
                             { <input
                                 type="text"
                                 name={key}
-                                value={editedModel[key]}
+                                value={editedModel[key].toString()}
                                 onChange={handleInputChange}
                             />}
                         </label>

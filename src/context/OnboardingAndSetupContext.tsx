@@ -418,7 +418,6 @@ export const OnboardingAndSetupProvider: React.FC<OnboardingAndSetupProps> = ({ 
             });
 
             let data = await response.json();
-            console.log("configsetups data", data);
 
             if (data && response.status==200) {
                 return data;

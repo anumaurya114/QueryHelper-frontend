@@ -68,9 +68,7 @@ const ProfileOnboardingPage = ({org}:{id?:number; [key:string]:any}) => {
 
     const handleSaveUser = (profile: Profile) => {
       setAlertMessage("");
-      console.log("saved profile", profile)
       updateProfile(profile).then((data: any) => {
-          console.log("saved profile", data)
           setAlertMessage(JSON.stringify(data));
           setTimeout(()=> {
               setAlertMessage("");
@@ -80,9 +78,7 @@ const ProfileOnboardingPage = ({org}:{id?:number; [key:string]:any}) => {
 
     const handleCreateProfile = (profile: Profile) => {
         setAlertMessage("");
-        console.log("created profile", profile)
         createProfile(profile).then((data: any) => {
-            console.log("created profile", data)
             setAlertMessage(JSON.stringify(data));
             setTimeout(()=> {
                 setAlertMessage("");
@@ -92,9 +88,7 @@ const ProfileOnboardingPage = ({org}:{id?:number; [key:string]:any}) => {
 
     const handleDeleteUser = (profile: Profile) => {
       setAlertMessage("");
-      console.log("deleted profile", profile)
       deleteProfile(profile).then((data: any) => {
-          console.log("deleted profile", data)
           setAlertMessage(JSON.stringify(data));
           setTimeout(()=> {
               setAlertMessage("");
@@ -112,11 +106,9 @@ const ProfileOnboardingPage = ({org}:{id?:number; [key:string]:any}) => {
       }).catch((error:any) => console.log(error));
   }
 
-    console.log(selectedProfile?.username, org, "selected profile")
     if(selectedProfile?.username=='' && org){
       selectedProfile['org_id'] = org.id;
       selectedProfile['org_name'] = org.name;
-      console.log("selected profile" + JSON.stringify(selectedProfile));
     }
     
 

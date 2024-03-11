@@ -1,7 +1,8 @@
-import { createContext, useState, useEffect } from 'react';
+import { createContext, useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import React, { ReactNode } from 'react';
 import apiConfigs from '../configs/apiConfigs';
+import OnboardingAndSetupContext from './OnboardingAndSetupContext';
 
 interface LogsAndHistoryProps {
     children: ReactNode;
@@ -13,16 +14,6 @@ export default LogsAndHistoryContext;
 
 
 export const LogsAndHistoryProvider: React.FC<LogsAndHistoryProps> = ({children}) => {
-
-    const [fileList, setFileList] = useState([]);
-
-    useEffect(() => {
-        getLogFiles()
-        .then(data => setFileList(data))
-        .catch(error => console.error('Error fetching file list:', error));
-    }, []);
-
-
     const getTokens = () => {
         const tokensString = localStorage.getItem('authTokens');
         if(tokensString===undefined || tokensString===null){
@@ -31,7 +22,7 @@ export const LogsAndHistoryProvider: React.FC<LogsAndHistoryProps> = ({children}
         return JSON.parse(tokensString);
     }
 
-    const getLogFiles = async () => {
+    const getLogFiles = async (selectConfigSetupId:any) => {
         const authTokens = getTokens();
         const response = await fetch(`${apiConfigs.baseUrl}/core/api/log-files/`, {
             method: 'POST',
@@ -39,6 +30,7 @@ export const LogsAndHistoryProvider: React.FC<LogsAndHistoryProps> = ({children}
                 'Content-Type':'application/json',
                 'Authorization': 'Token ' + authTokens?.access,
             },
+            body:JSON.stringify({configSetupId:selectConfigSetupId})
         })
        
         const data = await response.json();
@@ -47,7 +39,7 @@ export const LogsAndHistoryProvider: React.FC<LogsAndHistoryProps> = ({children}
         } else return [];
     }
 
-    const downloadLogFile = async (filename:string) => {
+    const downloadLogFile = async (filename:string, selectConfigSetupId:any) => {
         try {
           const authTokens = getTokens();
           const response = await fetch(`${apiConfigs.baseUrl}/core/api/log-file/${filename}/`, {
@@ -56,6 +48,7 @@ export const LogsAndHistoryProvider: React.FC<LogsAndHistoryProps> = ({children}
                   'Content-Type':'text',
                   'Authorization': 'Token ' + authTokens?.access,
               },
+              body:JSON.stringify({configSetupId:selectConfigSetupId})
           })
     
           if (!response.ok) {
@@ -79,8 +72,8 @@ export const LogsAndHistoryProvider: React.FC<LogsAndHistoryProps> = ({children}
 
     
     let contextData = {
-        fileList:fileList,
         downloadLogFile:downloadLogFile,
+        getLogFiles,
     }
 
     return(

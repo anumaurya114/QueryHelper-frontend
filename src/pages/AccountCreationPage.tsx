@@ -67,7 +67,6 @@ const AccountCreationPage = () => {
       setSelectedOrg({ id: selectedOption.value, name: selectedOption.label });
       setSelectedOrgName(selectedOption.label);
     } else setSelectedOrg(null);
-    console.log(selectedOrg);
   }
 
   const handleOrgSelectionForUserCreation = (selectedOption: any) => {
@@ -89,7 +88,6 @@ const AccountCreationPage = () => {
 
   const handleUpdateOrg = () => {
     updateOrg({ id: selectedOrg?.id, name: selectedOrgName }).then((result: any) => {
-      console.log(result);
     })
     setReload(!reload);
   }

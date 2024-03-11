@@ -25,13 +25,15 @@ function App() {
   return (
     <div className="App">
         <Router>
-            <ChatProvider>
             <AuthProvider>
+            <SetupProvider>
+            <OnboardingAndSetupProvider>
+
+            <ChatProvider>
             <RunQueryProvider>
             <LogsAndHistoryProvider>
-            <SetupProvider>
+            
             <AccountProvider>
-            <OnboardingAndSetupProvider>
             <ErrorBoundary>
                 <Header/>
                 <Routes>
@@ -44,13 +46,14 @@ function App() {
                     <Route path="/onboarding-setup" element={<PrivateRoute><OnboardingAndSetupPage/></PrivateRoute>}/>
                 </Routes>
             </ErrorBoundary>
-            </OnboardingAndSetupProvider>
             </AccountProvider>
-            </SetupProvider>
             </LogsAndHistoryProvider>
             </RunQueryProvider>
-            </AuthProvider>
             </ChatProvider>
+            </OnboardingAndSetupProvider>
+            </SetupProvider>
+            </AuthProvider>
+
         </Router>
     </div>
   );

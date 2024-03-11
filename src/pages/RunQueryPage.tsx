@@ -6,6 +6,7 @@ import RunQueryContext from '../context/RunQueryContext';
 import '../css/table.css';
 import { CSVData } from '../context/RunQueryContext';
 import ProcessingIndicator from "../components/Processing";
+import SetupContext from '../context/SetupContext';
 
 const Container = styled.div`
   width:100%;
@@ -85,6 +86,11 @@ const RunQueryPage: React.FC = () => {
     processingStatus,
 } = useContext(RunQueryContext);
 
+const {
+  selectConfigSetupId,
+  setSelectedConfigsetupId,
+} = useContext(SetupContext);
+
 const [isHovered, setIsHovered] = useState(false);
 const [disclaimerText, setDisclaimerText] = useState(`Results are stripped to show only top 100 rows.
 Please add your custom limit to get extended result.
@@ -158,7 +164,7 @@ const hoverTextStyle: CSSProperties = {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       >
-      <button style={buttonStyle} onClick={() => handleSubmit(queryInput)}
+      <button style={buttonStyle} onClick={() => handleSubmit(queryInput, selectConfigSetupId)}
       >Run query</button>
       {isHovered && <p style={hoverTextStyle}>
  {disclaimerText}

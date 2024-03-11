@@ -24,7 +24,6 @@ const OrgOnboardingPage = () => {
 
     useEffect(() => {
         fetchAllOrgs().then((data: any) => {
-          console.log(data, "orgs data");
           setOrgs(data);
         });
     }, []);

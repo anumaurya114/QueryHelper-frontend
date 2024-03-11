@@ -1,6 +1,8 @@
 import React, {useContext, useState, useEffect} from 'react'
 import styled from 'styled-components';
 import LogsAndHistoryContext from '../context/LogsAndHistoryContext';
+import SetupContext from '../context/SetupContext';
+import ConfigForm, { ConfigData } from '../components/ConfigForm';
 
 const Container = styled.div`
   display: flex;
@@ -14,16 +16,26 @@ const Container = styled.div`
 const LogsAndHistoryPage: React.FC = () => {
 
   const {
-    fileList,
     downloadLogFile,
+    getLogFiles,
   } = useContext(LogsAndHistoryContext);
-  console.log(fileList);
+  const {
+    selectConfigSetupId,
+    setSelectedConfigsetupId,
+  } = useContext(SetupContext);
+  const [fileList, setFileList] = useState<any[]>([]);
+
+  useEffect(() => {
+    getLogFiles(selectConfigSetupId)
+        .then((data:any[]) => setFileList(data))
+        .catch((error:string) => console.error('Error fetching file list:', error));
+  }, [selectConfigSetupId]);
   return (
    <>
     <h1 style={{textAlign:'center'}}>Logs and History</h1>
     <Container style={{flexDirection:'column'}}>
       {fileList.map((file:string) => {
-        return <div key={file} style={{margin:'auto', minWidth:'20px'}}><button onClick={() => downloadLogFile(file)}>{file}</button></div>
+        return <div key={file} style={{margin:'auto', minWidth:'20px'}}><button onClick={() => downloadLogFile(file, selectConfigSetupId)}>{file}</button></div>
       })}
     </Container>
     </>
