@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useRef } from 'react'
+import React, { useState, useEffect, useContext, useRef, CSSProperties } from 'react'
 import AuthContext from '../context/AuthContext';
 import ChatContext from '../context/ChatContext';
 
@@ -24,7 +24,19 @@ const ProcessingStatus = styled.div<ProcessingStatusProps>`
   border-radius: 5px;
 `;
 
+const buttonWhite: CSSProperties = {
+  // Set a fixed width for the button
+  padding: '10px', // Optional: Add padding to make the button visually appealing
+  position: 'relative',
+  display: 'inline-block',
+  borderRadius: 12,
+  backgroundColor: '#fff',
+  color: 'black',
+  cursor: 'pointer',
+  marginRight: 10,
+  border: '1px solid #999'
 
+};
 
 const ChatbotContainer = styled.div`
   max-width: calc(100% - 20px);
@@ -32,6 +44,7 @@ const ChatbotContainer = styled.div`
   height: 70vh; /* Set the height to 70% of the viewport height */
   overflow: hidden;
   display: flex;
+  background-color: #EBF5FB;
   flex-direction: column-reverse; /* Reverse the column direction to display messages from bottom to top */
 `;
 
@@ -42,6 +55,7 @@ const MessagesContainer = styled.div`
   border: 1px solid #ccc;
   scroll-behavior: smooth; /* Enable smooth scrolling */
   margin-bottom:20px;
+ 
 `;
 
 const Message = styled.div<{ isUser?: boolean }>`
@@ -52,7 +66,7 @@ const Message = styled.div<{ isUser?: boolean }>`
   margin-left: ${(props) => (props.isUser ? '20%' : '0%')};
   margin-right: ${(props) => (props.isUser ? '0%' : '20%')};
   align-self: ${(props) => (props.isUser ? 'flex-end' : 'flex-start')};
-  background-color: ${(props) => (props.isUser ? '#4caf50' : '#f2f2f2')};
+  background-color: ${(props) => (props.isUser ? '#2E86C1' : '#D6EAF8')};
   color: ${(props) => (props.isUser ? 'white' : 'black')};
 `;
 
@@ -64,31 +78,36 @@ const InputContainer = styled.div`
   right: 0;
   display: flex;
   align-items: center;
-  margin-top: 10px;
+  margin: 10px;
+ 
 `;
 
 const Input = styled.textarea`
   width: 100%;
   resize: none;
-  padding: 2px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  padding: 4px;
+  border: 2px solid #dee;
+  border-radius: 14px;
   overflow-y: auto;
   min-height: 10px; /* Initial height */
   resize: none; /* Prevent resizing */
   overflow-y: hidden; /* Hide vertical scrollbar */
-  border: 1px solid #ccc;
-  margin-left:20px;
+  
+  
+  background-color: '#fff000';
 `;
 
 const SubmitButton = styled.button`
   margin-left: 8px;
+  width: 100px;
   padding: 8px;
   border: none;
   border-radius: 4px;
-  background-color: #4caf50;
+  background-color: #3f51b5;
   color: white;
   cursor: pointer;
+  box-shadow: 0px 1px 1px lightgray;
+  transition: ease background-color 250ms;
 `;
 
 const HomePage = () => {
@@ -179,7 +198,7 @@ const HomePage = () => {
 
   return (
     <>
-      <h1 style={{ textAlign: 'center' }}>Query Helper</h1>
+      {/* <h3 style={{ textAlign: 'center' }}>Query Lab</h3> */}
 
       <div>
         <Dropdown defaultSelection={configsetups?.map(configsetup => {
@@ -190,16 +209,20 @@ const HomePage = () => {
               setSelectedConfigsetupId(Number(option.value))}
           options={configsetups?.map(configsetup => { return ({ label: configsetup.setupName, value: configsetup.id?.toString() } as Option) }) || []} />
         <ChatbotContainer>
-          <MessagesContainer style={{margin:'30px'}}>
+          <MessagesContainer>
             {messages.map((msg: any) => (
               <Message key={msg.id} isUser={msg.isUser}>
                 <ReactMarkdown children={msg.content.replaceAll("\n", "  \n")} ></ReactMarkdown>
-                {(msg.id % 2 == (messages.length - 1) % 2) && <div><button onClick={() => {
-                  setQueryInput(msg.content);
-                  navigate('run-query');
-                  handleSubmitOfRunQuery(msg.content, selectConfigSetupId);
-                }}>Run query</button>
-                  <button onClick={() => copyToClipboard(msg.content)}>copy</button>
+                {(msg.id % 2 == (messages.length - 1) % 2) && <div>
+                  <button
+                    style={buttonWhite}
+                    onClick={() => {
+                      setQueryInput(msg.content);
+                      navigate('run-query');
+                      handleSubmitOfRunQuery(msg.content, selectConfigSetupId.toString());
+                    }}>Run query
+                  </button>
+                  <button style={buttonWhite} onClick={() => copyToClipboard(msg.content)}>Copy text</button>
                   {copiedStatus && <p>Text copied to clipboard!</p>}
                 </div>}
               </Message>
@@ -207,7 +230,7 @@ const HomePage = () => {
             <div ref={messagesEndRef}></div>
           </MessagesContainer >
           {processingStatus && <ProcessingStatus processing={processingStatus}>getting response...</ProcessingStatus>}
-          <InputContainer style={{marginTop:'20px'}}>
+          <InputContainer>
             <Input
               ref={inputRef}
               value={inputText}
@@ -217,7 +240,7 @@ const HomePage = () => {
               }}
               onKeyDown={handleKeyDown}
               placeholder="Type your message..."
-              rows={4}
+              rows={2}
             />
             <SubmitButton onClick={handleSubmit}>Send</SubmitButton>
           </InputContainer>
