@@ -1,4 +1,4 @@
-import React, {useContext, useState, CSSProperties} from 'react'
+import React, { useContext, useState, CSSProperties } from 'react'
 import AuthContext from '../context/AuthContext';
 import styled from 'styled-components';
 import ChatContext from '../context/ChatContext';
@@ -9,41 +9,31 @@ import ProcessingIndicator from "../components/Processing";
 import SetupContext from '../context/SetupContext';
 
 const Container = styled.div`
-  width:100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: #f5f5f5;
-  overflow: hidden;
-  display: flex;
+  width:94%;
+  align-content: center;
   margin: auto;
+  
 `;
 
 const Input = styled.textarea`
-  width: 100%;
-  resize: none;
-  padding: 2px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  overflow-y: auto;
-  min-height: 50px; /* Initial height */
-  resize: none; /* Prevent resizing */
-  overflow-y: hidden; /* Hide vertical scrollbar */
-  border: 1px solid #ccc;
-  margin-left:20px;
+  
 `;
 
 const Table = styled.table`
-  width: 100%;
+  
   border-collapse: collapse;
-  margin-top: 20px;
+  margin:20px;
+  // margin-top: 20px;
+  // margin-bottom: 40px;
+  // margin-left: 5px;
+  // margin-right: 5px;
 `;
 
 const TableHeader = styled.th`
   border: 1px solid #ddd;
   padding: 8px;
   text-align: left;
-  background-color: #f2f2f2;
+  background-color: #aed6f1;
 `;
 
 const TableRow = styled.tr`
@@ -69,10 +59,10 @@ const ProcessingStatus = styled.div<ProcessingStatusProps>`
 `;
 
 const RunQueryPage: React.FC = () => {
-    const {
-      getBotMessage,
-      appendMessages,
-      messages
+  const {
+    getBotMessage,
+    appendMessages,
+    messages
   } = useContext(ChatContext);
 
   const {
@@ -84,68 +74,89 @@ const RunQueryPage: React.FC = () => {
     outputDf,
     outputText,
     processingStatus,
-} = useContext(RunQueryContext);
+  } = useContext(RunQueryContext);
 
-const {
-  selectConfigSetupId,
-  setSelectedConfigsetupId,
-} = useContext(SetupContext);
+  const {
+    selectConfigSetupId,
+    setSelectedConfigsetupId,
+  } = useContext(SetupContext);
 
-const [isHovered, setIsHovered] = useState(false);
-const [disclaimerText, setDisclaimerText] = useState(`Results are stripped to show only top 100 rows.
+  const [isHovered, setIsHovered] = useState(false);
+  const [disclaimerText, setDisclaimerText] = useState(`Results are stripped to show only top 100 rows.
 Please add your custom limit to get extended result.
 eg
  select * from schema.table limit 200. test`);
 
- const buttonStyle: CSSProperties = {
-  width: '200px', // Set a fixed width for the button
-  padding: '10px', // Optional: Add padding to make the button visually appealing
-  position: 'relative',
-  display: 'inline-block',
-};
+  const buttonStyle: CSSProperties = {
+    width: '200px', // Set a fixed width for the button
+    padding: '10px', // Optional: Add padding to make the button visually appealing
+    position: 'relative',
+    display: 'inline-block',
+    borderRadius: 4,
+    backgroundColor: '#AED6F1',
+    color: 'black',
+    cursor: 'pointer',
+    marginRight: 10,
+    border: '1px solid #999'
 
-const hoverTextStyle: CSSProperties = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  color: 'white',
-  backgroundColor: '#007bff', // Example background color for the flying text
-  padding: '5px 10px', // Optional: Add padding to make the text visually appealing
-  borderRadius: '4px', // Optional: Add border radius for the text
-  boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)', // Optional: Add box shadow for the text
-  zIndex: 1, // Ensure the flying text is above the button
-};
+  };
+
+  const buttonWhite: CSSProperties = {
+    width: '200px', // Set a fixed width for the button
+    padding: '10px', // Optional: Add padding to make the button visually appealing
+    position: 'relative',
+    display: 'inline-block',
+    borderRadius: 12,
+    backgroundColor: '#fff',
+    color: 'black',
+    cursor: 'pointer',
+    marginRight: 10,
+    border: '1px solid #999'
+
+  };
+  const hoverTextStyle: CSSProperties = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    color: 'white',
+    backgroundColor: '#007bff', // Example background color for the flying text
+    padding: '5px 10px', // Optional: Add padding to make the text visually appealing
+    borderRadius: '4px', // Optional: Add border radius for the text
+    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)', // Optional: Add box shadow for the text
+    zIndex: 1, // Ensure the flying text is above the button
+  };
 
 
 
   const getTableContent = (arr: CSVData) => {
-    const iterateItem = (arr:CSVData, index:number) => {
+
+    const iterateItem = (arr: CSVData, index: number) => {
       return Object.keys(arr).map(function (column) {
         return (
-            <td>{arr[column][index]}</td>
+          <TableCell>{arr[column][index]}</TableCell>
         );
       })
     }
-    return (<table key={"table"} style={{ width: '100%' }}>
+    return (<Table key={"table"} style={{ width: '94%' }}>
       <tr>{Object.keys(arr).map(function (key, index) {
         return (
-          <th>
+          <TableHeader>
             {key}
-          </th>
+          </TableHeader>
 
         );
       })}</tr>
-      
-      {(Object.keys(arr).length>0? arr[Object.keys(arr)[0]] :[]).map(function (cellValue, index) {
+
+      {(Object.keys(arr).length > 0 ? arr[Object.keys(arr)[0]] : []).map(function (cellValue, index) {
         return (
-          <tr>
+          <TableRow>
             {iterateItem(arr, index)}
-          </tr>
+          </TableRow>
 
         );
       })}
-    </table>)
+    </Table>)
 
   };
 
@@ -153,36 +164,74 @@ const hoverTextStyle: CSSProperties = {
 
   return (
     <>
-    <h1 style={{textAlign:'center'}}>Run Query</h1>
-    <Container style={{marginTop:'10px', alignItems:'center', flexDirection:'column' }}>
-      <Input style={{paddingTop:'10px', width:'100%', minHeight:'200px'}} placeholder='put your sql here' defaultValue={queryInput} onChange={(e) => {setQueryInput(e.target.value);  e.target.style.height = 'auto'; // Reset the height
-                        e.target.style.height = `${e.target.scrollHeight}px`;}}>
-      </Input>
+      <div style={{ backgroundColor: '#EBF5FB' }}>
+        <Container>
 
-      <div style={{flexDirection:'row'}}>
-      <div
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      >
-      <button style={buttonStyle} onClick={() => handleSubmit(queryInput, selectConfigSetupId)}
-      >Run query</button>
-      {isHovered && <p style={hoverTextStyle}>
- {disclaimerText}
-</p>}
+          <div style={{ display: 'flex', flexDirection: 'row' }}>
+            <div style={{ marginTop: 20, flex: 1 }}>
+              <Input style={{
+                display: 'block',
+                margin: 'auto', paddingTop: '10px', width: '100%', height: '200px', borderRadius: 10
+              }}
+                placeholder='Put your sql here' defaultValue={queryInput}
+                onChange={(e) => {
+                  setQueryInput(e.target.value);
+                  // e.target.style.height = 'auto'; // Reset the height
+                  //e.target.style.height = `${e.target.scrollHeight}px`;
+                }}>
+              </Input>
+            </div>
+
+            <div style={{ flex: 1, padding: 10, borderRadius: 8, backgroundColor: '#ddd', marginTop: 20, marginLeft: 10, height: '200px', overflowY: 'scroll' }}>
+              {(outputText as string).toLowerCase().includes("error") &&
+                <span style={{ fontSize: 14, textAlign: 'center', maxHeight: '200px' }}>
+                  Respose:- {outputText}
+                </span>}
+              {
+                processingStatus != '' && < ProcessingStatus processing={processingStatus} >
+                  {
+                    processingStatus ? 'Processing...' : 'Processing completed.'
+                  }
+                </ProcessingStatus >
+              }
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'row', marginBottom: 10 }}>
+            <div
+              onMouseEnter={() => setIsHovered(true)}
+              onMouseLeave={() => setIsHovered(false)}
+            >
+              <button style={buttonStyle} onClick={() => handleSubmit(queryInput, selectConfigSetupId)}
+              >Run query</button>
+              {isHovered && <p style={hoverTextStyle}>
+                {disclaimerText}
+              </p>}
+            </div>
+
+          </div>
+        </Container >
       </div>
-      
-      <button style={buttonStyle} onClick={() => downloadCSV()}>Download Result as CSV</button>
-      </div>
-    </Container>
-    {<ProcessingStatus processing={processingStatus}>
-      {processingStatus ? 'Processing...' : 'Processing completed.'}
-    </ProcessingStatus>}
-    {(outputText as string).toLowerCase().includes("error") && <p>{outputText}</p>}
-    <div style={{minWidth:'100%', minHeight:'20px', textAlign:'center', border:'10px', borderColor:'black', margin:'20px'}}>Result Table</div>
-    <div className="p-2 table-container" style={{alignItems:'center'}}>
-      {getTableContent(outputDf)}
-    </div>
-    
+
+      {/* <div style={{ display: 'flex', flex: 1, backgroundColor: '#ddd', height: 5 }}></div> */}
+
+      {Object.keys(outputDf).length > 0 &&
+        <div style={{ margin: 10, border: '1px solid #333' }}>
+          <div style={{ display: 'flex', flexDirection: 'row' }}>
+
+            <div style={{ flex: 1, textAlign: 'center', border: '10px', borderColor: 'black', margin: '20px' }}>
+              <span style={{ fontSize: 18, fontWeight: 'bold' }}> Result Data </span>
+            </div>
+
+            <div style={{ margin: 'auto' }}>
+              <button style={buttonWhite} onClick={() => downloadCSV()}>Download CSV</button>
+            </div>
+          </div>
+          <div className="p-2 table-container" style={{ alignItems: 'center' }}>
+            {getTableContent(outputDf)}
+          </div>
+        </div>
+      }
     </>
   );
 };

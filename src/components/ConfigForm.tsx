@@ -47,9 +47,7 @@ const ConfigForm: React.FC<ConfigFormProps> = ({ obj, onUpdate }) => {
       // if(typeof value==='string' || typeof value==='number'){
       //     parsedData = value;
       // } else parsedData = JSON.parse(value);
-      // setEditedValues({ ...editedValues, [key]: parsedData });
-      setEditedValues({ ...editedValues, [key]: value });
-
+      setEditedValues({ ...editedValues, [key]: parsedData });
     } catch (error) {
       console.log("couldn't parse", error)
       setEditedValues({ ...editedValues, [key]: value });
